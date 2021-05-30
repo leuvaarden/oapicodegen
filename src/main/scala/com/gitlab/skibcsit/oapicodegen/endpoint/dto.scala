@@ -1,8 +1,7 @@
 package com.gitlab.skibcsit
-package oapi2e4s.endpoint
+package oapicodegen.endpoint
 
-import oapi2e4s.lang.{Expr, LangAlg}
-
+import com.gitlab.skibcsit.oapicodegen.lang.{Expr, LangAlg}
 import io.swagger.v3.oas.models.OpenAPI
 import io.swagger.v3.oas.models.media.Schema
 

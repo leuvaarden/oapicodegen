@@ -1,5 +1,5 @@
 package com.gitlab.skibcsit
-package oapi2e4s
+package oapicodegen
 
 import io.swagger.parser.OpenAPIParser
 import io.swagger.v3.oas.models.OpenAPI

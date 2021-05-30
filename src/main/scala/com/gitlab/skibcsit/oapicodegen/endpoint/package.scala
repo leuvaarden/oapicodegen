@@ -1,5 +1,5 @@
 package com.gitlab.skibcsit
-package oapi2e4s
+package oapicodegen
 
 import io.swagger.v3.oas.models._
 import io.swagger.v3.oas.models.media._
@@ -48,6 +48,7 @@ package object endpoint {
   // TODO support more schemes (e.g. ComposedSchema)
   // TODO support non-jvm platform
   // TODO support required flag
+
   /** Converts openAPI schema to Scala type */
   def resolveType[T](schema: Schema[T]): String = schema match {
     // primitive types

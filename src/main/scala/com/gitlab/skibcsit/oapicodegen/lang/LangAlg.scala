@@ -1,5 +1,5 @@
 package com.gitlab.skibcsit
-package oapi2e4s.lang
+package oapicodegen.lang
 
 /** Algebra that defines rules of code generation */
 trait LangAlg[LangTree, LangVal, LangType] {

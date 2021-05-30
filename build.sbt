@@ -1,9 +1,8 @@
-name := "openapi-to-endpoints4s"
-
+name := "oapicodegen"
+organizationName := "com.gitlab.skibcsit"
 version := "0.1"
 
 scalaVersion := "2.13.6"
-sbtVersion := "1.5.2"
 
 // https://mvnrepository.com/artifact/io.swagger.parser.v3/swagger-parser
 libraryDependencies += "io.swagger.parser.v3" % "swagger-parser" % "2.0.25"

@@ -1,5 +1,5 @@
 package com.gitlab.skibcsit
-package oapi2e4s.lang
+package oapicodegen.lang
 
 import treehugger.forest._
 import treehuggerDSL._

@@ -1,8 +1,8 @@
 package com.gitlab.skibcsit
-package oapi2e4s
+package oapicodegen
 
-import com.gitlab.skibcsit.oapi2e4s.endpoint.{dto, endpoints4s, toTraitName}
-import com.gitlab.skibcsit.oapi2e4s.lang.TreeHugger
+import com.gitlab.skibcsit.oapicodegen.endpoint.{dto, endpoints4s, toTraitName}
+import com.gitlab.skibcsit.oapicodegen.lang.TreeHugger
 
 import java.io.{File, FileWriter}
 
