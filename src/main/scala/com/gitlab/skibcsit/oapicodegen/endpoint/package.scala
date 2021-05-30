@@ -26,7 +26,7 @@ package object endpoint {
     .map((str: String) => str.head.toUpper + str.tail.toLowerCase)
     .mkString
 
-  /** Convertes path to iterable of either Left(path segment) Right(path param) */
+  /** Converts path to iterable of either Left(path segment) Right(path param) */
   def parsePath(path: String): Iterable[Either[String, String]] =
     path.split(PathSeparatorPattern)
       .filter((str: String) => str.nonEmpty)
