@@ -12,6 +12,7 @@ object endpoints4s {
   private final val TraitParents: Iterable[String] = List(
     "endpoints4s.algebra.Endpoints",
     "endpoints4s.algebra.circe.JsonEntitiesFromCodecs",
+    "endpoints4s.openapi.StatusCodes",
   )
   private final val MethodPost: String = "Post"
   private final val MethodsMap: Map[HttpMethod, String] = Map(
@@ -40,8 +41,8 @@ object endpoints4s {
 
   // creates endpoint arguments
   private def endpointContent[LangTree, LangVal, LangType](path: String, method: HttpMethod, operation: Operation): LangAlg[LangTree, LangVal, LangType] => Iterable[LangTree] =
-    (langAlg: LangAlg[LangTree, LangVal, LangType]) => List(langAlg.langApply(langAlg.langRef("request"), List(resolveMethod(method)(langAlg), resolvePath(path, operation.getParameters.asScala)(langAlg)) ++ resolveContent(operation)(langAlg)))
-      .concat(resolveResponses(operation)(langAlg))
+    (langAlg: LangAlg[LangTree, LangVal, LangType]) => List(langAlg.langApply(langAlg.langRef("request"), List(resolveMethod(method)(langAlg), resolvePath(path, operation.getParameters.asScala)(langAlg)) ++ resolveContent(operation)(langAlg) ++ resolveDescription(operation)(langAlg)))
+      .appended(resolveResponses(operation)(langAlg))
 
   // creates request body if exists
   private def resolveContent[LangTree, LangVal, LangType](operation: Operation): LangAlg[LangTree, LangVal, LangType] => Option[LangTree] =
@@ -49,10 +50,22 @@ object endpoints4s {
       if (operation.getRequestBody == null) None
       else Some(langAlg.langTypeApply(langAlg.langType("jsonRequest"), List(langAlg.langType(resolveType(operation.getRequestBody.getContent.entrySet().asScala.head.getValue.getSchema)))))
 
-  // TODO
+  // creates endpoint description if exists
+  private def resolveDescription[LangTree, LangVal, LangType](operation: Operation): LangAlg[LangTree, LangVal, LangType] => Option[LangTree] =
+    (langAlg: LangAlg[LangTree, LangVal, LangType]) =>
+      if (operation.getDescription == null) None
+      else Some(langAlg.langApply(langAlg.langRef("Some"), List(langAlg.langLiteral(operation.getDescription))))
+
   // creates responses
-  private def resolveResponses[LangTree, LangVal, LangType](operation: Operation): LangAlg[LangTree, LangVal, LangType] => Iterable[LangTree] =
-    (langAlg: LangAlg[LangTree, LangVal, LangType]) => langAlg.langApply(langAlg.langRef("ok"), List(langAlg.langRef("textResponse"))) :: Nil
+  private def resolveResponses[LangTree, LangVal, LangType](operation: Operation): Expr[LangTree, LangVal, LangType] =
+    (langAlg: LangAlg[LangTree, LangVal, LangType]) => getResponses(operation)
+      .map(tuple => tuple._1.head match {
+        case '2' => (tuple._1, Option(tuple._2.getContent).filter(content => !content.isEmpty).map(content => resolveType(content.values().asScala.head.getSchema)).map((str: String) => langAlg.langTypeApply(langAlg.langType("jsonResponse"), List(langAlg.langType(str)))), Option(tuple._2.getDescription))
+        case '4' => (tuple._1, Some(langAlg.langRef("clientErrorsResponseEntity")), Option(operation.getDescription))
+        case '4' => (tuple._1, Some(langAlg.langRef("serverErrorResponseEntity")), Option(operation.getDescription))
+      })
+      .map(tuple => langAlg.langApply(langAlg.langRef("response"), List(langAlg.langLiteral(tuple._1.toInt), tuple._2.getOrElse(langAlg.langRef("emptyResponse")), tuple._3.map((str: String) => langAlg.langApply(langAlg.langRef("Some"), List(langAlg.langLiteral(str)))).getOrElse(langAlg.langRef("None")))))
+      .reduceLeft((tree1: LangTree, tree2: LangTree) => langAlg.langApply(langAlg.langDot(tree1, "orElse"), List(tree2)))
 
   // creates endpoint method value
   private def resolveMethod[LangTree, LangVal, LangType](httpMethod: HttpMethod): Expr[LangTree, LangVal, LangType] =

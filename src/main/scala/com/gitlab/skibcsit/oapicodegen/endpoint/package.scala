@@ -4,6 +4,7 @@ package oapicodegen
 import io.swagger.v3.oas.models._
 import io.swagger.v3.oas.models.media._
 import io.swagger.v3.oas.models.parameters.Parameter
+import io.swagger.v3.oas.models.responses.ApiResponse
 
 import scala.jdk.CollectionConverters._
 import scala.util.matching.Regex
@@ -44,6 +45,18 @@ package object endpoint {
   /** True if there are query params */
   def containsQueryParams(params: Iterable[Parameter]): Boolean =
     params != null && params.nonEmpty && params.count((parameter: Parameter) => "query".equals(parameter.getIn)) > 0
+
+  /** Extracts responses from endpoint */
+  def getResponses(operation: Operation): Iterable[(String, ApiResponse)] =
+    if (operation.getResponses == null) List(("200", new ApiResponse()))
+    else operation.getResponses
+      .keySet().asScala
+      .map(key => if (key.equals("default")) "200" else key)
+      .filter(key => key.forall((c: Char) => c.isDigit))
+      .toList
+      .distinct
+      .sorted
+      .map(key => (key, operation.getResponses.getOrDefault(key, operation.getResponses.get("default"))))
 
   // TODO support more schemes (e.g. ComposedSchema)
   // TODO support non-jvm platform
