@@ -10,6 +10,9 @@ libraryDependencies += "io.swagger.parser.v3" % "swagger-parser" % "2.0.25"
 // https://mvnrepository.com/artifact/com.eed3si9n/treehugger
 libraryDependencies += "com.eed3si9n" %% "treehugger" % "0.4.4"
 
+// https://mvnrepository.com/artifact/commons-cli/commons-cli
+libraryDependencies += "commons-cli" % "commons-cli" % "1.4"
+
 // https://mvnrepository.com/artifact/org.endpoints4s/json-schema-generic
 libraryDependencies += "org.endpoints4s" %% "json-schema-generic" % "1.3.0" % Test
 
