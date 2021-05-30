@@ -9,7 +9,7 @@ import io.swagger.v3.oas.models.media.Schema
 import scala.jdk.CollectionConverters._
 
 object dto {
-  // main method
+  /** Generates package object with case classes from "Components" section of specification */
   def generate[LangTree, LangVal, LangType](name: String, openAPI: OpenAPI): Expr[LangTree, LangVal, LangType] =
     (langAlg: LangAlg[LangTree, LangVal, LangType]) => langAlg.langPackageObject(name, langAlg.langBlock(createCaseClasses(openAPI).map((value: Expr[LangTree, LangVal, LangType]) => value(langAlg))))
 

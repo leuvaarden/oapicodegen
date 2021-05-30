@@ -13,19 +13,19 @@ package object endpoint {
   private final val PathSeparatorPattern: String = "/"
   private final val QueryParamRegex: Regex = "\\{(\\w+)}".r
 
-  // retrieve endpoints data from openAPI object
+  /** Retrieves endpoints data from openAPI object */
   def getEndpoints(openAPI: OpenAPI): Iterable[(String, PathItem.HttpMethod, Operation)] = openAPI.getPaths
     .entrySet().asScala
     .map(uriAndItem => (uriAndItem.getKey, uriAndItem.getValue.readOperationsMap().asScala))
     .flatMap(uriAndMap => uriAndMap._2.map(methodAndContent => (uriAndMap._1, methodAndContent._1, methodAndContent._2)))
 
-  // removes spaces, converts to upper camel case, concatenates
+  /** Removes spaces, converts to upper camel case, concatenates */
   def toTraitName(s: String): String = s.split(SpacePattern)
     .filter((str: String) => str.nonEmpty)
     .map((str: String) => str.head.toUpper + str.tail.toLowerCase)
     .mkString
 
-  // either path segment (left) or path param (right)
+  /** Convertes path to iterable of either Left(path segment) Right(path param) */
   def parsePath(path: String): Iterable[Either[String, String]] =
     path.split(PathSeparatorPattern)
       .filter((str: String) => str.nonEmpty)
@@ -34,19 +34,21 @@ package object endpoint {
         case None => Left(str)
       })
 
-  def resolveSegmentType(value: String, params: Iterable[Parameter]): String =
-    params.filter((parameter: Parameter) => parameter.getName.equals(value))
+  /** Finds and resolves type of param */
+  def resolveSegmentType(name: String, params: Iterable[Parameter]): String =
+    params.filter((parameter: Parameter) => parameter.getName.equals(name))
       .map((parameter: Parameter) => parameter.getSchema)
       .map((schema: Schema[_]) => resolveType(schema))
       .head
 
+  /** True if there are query params */
   def containsQueryParams(params: Iterable[Parameter]): Boolean =
     params != null && params.nonEmpty && params.count((parameter: Parameter) => "query".equals(parameter.getIn)) > 0
 
   // TODO support more schemes (e.g. ComposedSchema)
   // TODO support non-jvm platform
   // TODO support required flag
-  // converts openAPI schema to Scala type
+  /** Converts openAPI schema to Scala type */
   def resolveType[T](schema: Schema[T]): String = schema match {
     // primitive types
     case _: BooleanSchema => "Boolean"

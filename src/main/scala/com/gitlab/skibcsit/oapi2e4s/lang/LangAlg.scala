@@ -1,6 +1,7 @@
 package com.gitlab.skibcsit
 package oapi2e4s.lang
 
+/** Algebra that defines rules of code generation */
 trait LangAlg[LangTree, LangVal, LangType] {
   def langTrait(`package`: String, name: String, parents: Iterable[String], body: Iterable[LangTree]): LangTree
 

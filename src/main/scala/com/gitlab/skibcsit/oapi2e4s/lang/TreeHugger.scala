@@ -4,7 +4,7 @@ package oapi2e4s.lang
 import treehugger.forest._
 import treehuggerDSL._
 
-// https://github.com/eed3si9n/treehugger
+/** [[https://github.com/eed3si9n/treehugger TreeHugger]] interpreter */
 trait TreeHugger extends LangAlg[Tree, ValDef, Type] {
   override def langTrait(`package`: String, name: String, parents: Iterable[String], body: Iterable[Tree]): Tree =
     TRAITDEF(name)

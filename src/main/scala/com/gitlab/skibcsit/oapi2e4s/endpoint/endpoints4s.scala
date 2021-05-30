@@ -23,7 +23,7 @@ object endpoints4s {
     HttpMethod.OPTIONS -> "Options",
   )
 
-  // main method
+  /** Generates trait object with [[https://github.com/endpoints4s/endpoints4s endpoints4s]] definitions */
   def generate[LangTree, LangVal, LangType](`package`: String, openAPI: OpenAPI): Expr[LangTree, LangVal, LangType] =
     (langAlg: LangAlg[LangTree, LangVal, LangType]) => langAlg.langTrait(`package`, toTraitName(openAPI.getInfo.getTitle), TraitParents, getEndpoints(openAPI).map(tuple => endpoint(tuple._1, tuple._2, tuple._3)(langAlg)))
 
