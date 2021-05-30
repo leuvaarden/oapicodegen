@@ -78,6 +78,7 @@ package object endpoint {
 
     // array types
     case _: ByteArraySchema => "Iterable[Byte]"
+    case _: FileSchema => "Iterable[Byte]"
     case schema: ArraySchema => "Iterable[" + resolveType(schema.getItems) + "]"
 
     // platform specific types
@@ -87,7 +88,6 @@ package object endpoint {
       case _ => "java.time.OffsetDateTime"
     }
     case _: UUIDSchema => "java.util.UUID"
-    case _: FileSchema => "java.io.File"
 
     // class
     case schema: ObjectSchema => schema.getType

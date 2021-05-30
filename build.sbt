@@ -27,3 +27,9 @@ libraryDependencies += "org.endpoints4s" %% "algebra-circe" % "1.3.0" % Test
 
 // https://mvnrepository.com/artifact/io.circe/circe-generic
 libraryDependencies += "io.circe" %% "circe-generic" % "0.13.0" % Test
+
+// https://mvnrepository.com/artifact/org.scalatest/scalatest
+libraryDependencies += "org.scalatest" %% "scalatest" % "3.2.9" % Test
+
+// https://mvnrepository.com/artifact/com.fasterxml.jackson.module/jackson-module-scala
+libraryDependencies += "com.fasterxml.jackson.module" %% "jackson-module-scala" % "2.12.3" % Test
