@@ -1,3 +1,1 @@
-cli args:
-
--pn com.gitlab.skibcsit.petstore -od src/test/scala/com/gitlab/skibcsit/petstore/ -oapi https://petstore.swagger.io/v2/swagger.json
+java -jar target/scala-2.12/oapicodegen-assembly-0.1.jar -pn com.gitlab.skibcsit.petstore -od src/test/scala/com/gitlab/skibcsit/petstore/ -oapi https://petstore3.swagger.io/api/v3/openapi.json

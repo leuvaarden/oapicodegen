@@ -5,22 +5,22 @@ import com.gitlab.skibcsit.oapicodegen.lang.{Expr, LangAlg}
 import io.swagger.v3.oas.models.OpenAPI
 import io.swagger.v3.oas.models.media.Schema
 
-import scala.jdk.CollectionConverters._
+import scala.collection.JavaConverters._
 
 object dto {
   /** Generates package object with case classes from "Components" section of specification */
   def generate[LangTree, LangVal, LangType](name: String, openAPI: OpenAPI): Expr[LangTree, LangVal, LangType] =
-    (langAlg: LangAlg[LangTree, LangVal, LangType]) => langAlg.langPackageObject(name, langAlg.langBlock(createCaseClasses(openAPI).map((value: Expr[LangTree, LangVal, LangType]) => value(langAlg))))
+   langAlg => langAlg.langPackageObject(name, langAlg.langBlock(createCaseClasses(openAPI)(langAlg)))
 
-  // creates collection of case classes
-  private def createCaseClasses[LangTree, LangVal, LangType](openAPI: OpenAPI): Iterable[Expr[LangTree, LangVal, LangType]] =
-    openAPI.getComponents.getSchemas.asScala.map(tuple => (langAlg: LangAlg[LangTree, LangVal, LangType]) => createCaseClass(tuple._1, tuple._2)(langAlg))
+  private def createCaseClasses[LangTree, LangVal, LangType](openAPI: OpenAPI): LangAlg[LangTree, LangVal, LangType] => Seq[LangTree] =
+    langAlg => openAPI.getComponents.getSchemas.asScala
+      .toSeq
+      .sortBy(_._1)
+      .map(tuple => createCaseClass(tuple._1, tuple._2)(langAlg))
 
-  // creates case class
   private def createCaseClass[T, LangTree, LangVal, LangType](name: String, schema: Schema[T]): Expr[LangTree, LangVal, LangType] =
-    (langAlg: LangAlg[LangTree, LangVal, LangType]) => langAlg.langCaseClass(name, schema.getProperties.entrySet().asScala.map(entry => createParam(entry.getKey, entry.getValue)(langAlg)))
+    langAlg => langAlg.langCaseClass(name, getSchemaProperties(schema).map(tuple => createParam(tuple._1, tuple._2)(langAlg)))
 
-  // creates param definition for case class
-  private def createParam[T, LangTree, LangVal, LangType](name: String, schema: Schema[T]): LangAlg[LangTree, LangVal, LangType] => LangVal =
-    (langAlg: LangAlg[LangTree, LangVal, LangType]) => langAlg.langParam(name, langAlg.langType(resolveType(schema)))
+  private def createParam[LangTree, LangVal, LangType](name: String, schema: Schema[_]): LangAlg[LangTree, LangVal, LangType] => LangVal =
+    langAlg => langAlg.langParam(name, langAlg.langType(resolveType(schema).getOrElse("String")))
 }
